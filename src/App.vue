@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <notifications group="foo" />
     <Form />
   </div>
 </template>
@@ -19,14 +20,15 @@ export default {
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   color: #2c3e50;
-  background-color: #fafafa;
   padding: 24px;
   box-sizing: border-box;
+  max-width: 850px;
+  margin: 0 auto;
 }
 
 html,
-body,
-#app {
+body {
+  background-color: #fafafa;
   height: 100%;
 }
 
