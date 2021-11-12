@@ -1,10 +1,10 @@
 export function throttle(f, t) {
-  const calls = {};
-  return function (args) {
-    let previousCall = calls.lastCall;
+  let lastCall;
+  return function (...args) {
+    let previousCall = lastCall;
     if (previousCall === undefined || Date.now() - previousCall > t) {
-      calls.lastCall = Date.now();
-      f(args);
+      lastCall = Date.now();
+      f(...args);
     }
   };
 }

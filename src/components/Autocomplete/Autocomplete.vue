@@ -6,6 +6,7 @@
       :class="inputClasses"
       v-model="search"
       @focus="showDropDown"
+      @blur="blurInput"
       @keydown.down="activeItemDown"
       @keydown.up="activeItemUp"
       @keydown.enter.prevent="activeItemEnter"
@@ -45,6 +46,10 @@ export default {
       default: "",
     },
     items: {
+      type: Array,
+      default: null,
+    },
+    validators: {
       type: Array,
       default: null,
     },
@@ -89,6 +94,7 @@ export default {
       ];
     },
   },
+  inject: ["checkInput"],
   methods: {
     showDropDown() {
       this.isDropdownOpen = true;
@@ -104,35 +110,28 @@ export default {
       this.invalid = false;
     },
     getNewValue(searchWord) {
-      console.log("FETCH SKILLS EVENT: GET SKILLS FROM API", searchWord);
       this.itemsAll = this.items.filter((item) =>
         item[this.textValue]
           .toLowerCase()
           .includes(searchWord ? searchWord.toLowerCase() : searchWord)
       );
       this.isDropdownOpen = true;
-      console.log(this.itemsAll);
     },
-    checkInput() {
-      if (this.value === null) {
-        this.invalid = true;
-        this.$emit("update:valid", false);
-      } else {
-        this.invalid = false;
-      }
+    blurInput() {
+      this.checkInput(this);
     },
     activeItemDown() {
-      if (this.itemActive < this.itemsAll.length) {
-        this.itemActive += 1;
-      }
+      this.itemActive < this.itemsAll.length - 1
+        ? (this.itemActive += 1)
+        : (this.itemActive = 0);
     },
     activeItemUp() {
-      if (this.itemActive > 0) {
-        this.itemActive -= 1;
-      }
+      this.itemActive > 0
+        ? (this.itemActive -= 1)
+        : (this.itemActive = this.itemsAll.length - 1);
     },
     activeItemEnter() {
-      let newValue = this.itemsAll[this.itemActive];
+      const newValue = this.itemsAll[this.itemActive];
       this.selectItem(newValue);
       this.itemActive = 0;
     },
@@ -153,7 +152,7 @@ ul {
   left: 0;
   top: 0;
   z-index: 99;
-  max-height: 300px;
+  max-height: 15rem;
   background: #fff;
   overflow: auto;
   border: 1px solid #00000020;
