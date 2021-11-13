@@ -7,7 +7,7 @@
       :value="value"
       type="date"
       @input="updateInput"
-      @blur="blurInput"
+      @blur="checkInput"
       :max="maxDate"
       :min="minDate"
     />
@@ -18,30 +18,19 @@
 </template>
 
 <script>
+import InputMixin from "@/components/InputMixin";
+
 export default {
+  mixins: [InputMixin],
   data() {
     return {
-      invalid: false,
       minDate: "1900-01-01",
-      error: "",
     };
   },
   props: {
     label: {
       type: String,
       default: "",
-    },
-    value: {
-      type: String,
-      default: "",
-    },
-    validators: {
-      type: Array,
-      default: null,
-    },
-    valid: {
-      type: Boolean,
-      default: true,
     },
   },
   computed: {
@@ -67,13 +56,9 @@ export default {
       return new Date(this.minDate) > new Date(this.value);
     },
   },
-  inject: ["checkInput"],
   methods: {
     updateInput(e) {
       this.$emit("input", e.target.value);
-    },
-    blurInput() {
-      this.checkInput(this);
     },
   },
 };

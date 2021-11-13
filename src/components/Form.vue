@@ -7,7 +7,8 @@
           <Input
             v-model="formData.personalData.lastname"
             :validators="[validators.onlyCyrilic, validators.nonEmpty]"
-            :valid.sync="valid"
+            :validForm.sync="validForm"
+            :bus="bus"
             type="text"
             label="Фамилия"
           />
@@ -16,7 +17,8 @@
           <Input
             v-model="formData.personalData.firstname"
             :validators="[validators.onlyCyrilic, validators.nonEmpty]"
-            :valid.sync="valid"
+            :validForm.sync="validForm"
+            :bus="bus"
             type="text"
             label="Имя"
           />
@@ -25,7 +27,8 @@
           <Input
             v-model="formData.personalData.middlename"
             :validators="[validators.onlyCyrilic, validators.nonEmpty]"
-            :valid.sync="valid"
+            :validForm.sync="validForm"
+            :bus="bus"
             type="text"
             label="Отчество"
           />
@@ -36,7 +39,8 @@
           <Datepicker
             v-model="formData.personalData.birthday"
             :validators="[validators.date, validators.nonEmpty]"
-            :valid.sync="valid"
+            :validForm.sync="validForm"
+            :bus="bus"
             label="Дата рождения"
           />
         </div>
@@ -44,7 +48,8 @@
           <Input
             v-model="formData.personalData.email"
             :validators="[validators.email, validators.nonEmpty]"
-            :valid.sync="valid"
+            :validForm.sync="validForm"
+            :bus="bus"
             type="text"
             label="Email"
           />
@@ -74,7 +79,8 @@
             textValue="nationality"
             :items="citizenshipsAll"
             :validators="[validators.nonEmpty]"
-            :valid.sync="valid"
+            :validForm.sync="validForm"
+            :bus="bus"
           />
         </div>
       </div>
@@ -89,7 +95,8 @@
             <Input
               v-model="formData.passportData.series"
               :validators="[validators.passportSeries, validators.nonEmpty]"
-              :valid.sync="valid"
+              :validForm.sync="validForm"
+              :bus="bus"
               type="number"
               label="Серия паспорта"
             />
@@ -98,7 +105,8 @@
             <Input
               v-model="formData.passportData.number"
               :validators="[validators.passportNumber, validators.nonEmpty]"
-              :valid.sync="valid"
+              :validForm.sync="validForm"
+              :bus="bus"
               type="number"
               label="Номер паспорта"
             />
@@ -107,7 +115,8 @@
             <Datepicker
               v-model="formData.passportData.date"
               :validators="[validators.date, validators.nonEmpty]"
-              :valid.sync="valid"
+              :validForm.sync="validForm"
+              :bus="bus"
               label="Дата выдачи"
             />
           </div>
@@ -124,7 +133,8 @@
             <Input
               v-model="formData.passportData.foreignСitizen.lastname"
               :validators="[validators.onlyLatin, validators.nonEmpty]"
-              :valid.sync="valid"
+              :validForm.sync="validForm"
+              :bus="bus"
               type="text"
               label="Фамилия на латинице"
             />
@@ -133,7 +143,8 @@
             <Input
               v-model="formData.passportData.foreignСitizen.firstname"
               :validators="[validators.onlyLatin, validators.nonEmpty]"
-              :valid.sync="valid"
+              :validForm.sync="validForm"
+              :bus="bus"
               type="text"
               label="Имя на латинице"
             />
@@ -144,7 +155,8 @@
             <Input
               v-model="formData.passportData.foreignСitizen.passportnumber"
               :validators="[validators.passportNumber, validators.nonEmpty]"
-              :valid.sync="valid"
+              :validForm.sync="validForm"
+              :bus="bus"
               type="number"
               label="Номер паспорта"
             />
@@ -156,7 +168,8 @@
               textValue="nationality"
               :validators="[validators.nonEmpty]"
               :items="countryIssue"
-              :valid.sync="valid"
+              :validForm.sync="validForm"
+              :bus="bus"
             />
           </div>
           <div class="col-md-4">
@@ -166,7 +179,8 @@
               textValue="type"
               :validators="[validators.nonEmpty]"
               :items="passportTypes"
-              :valid.sync="valid"
+              :validForm.sync="validForm"
+              :bus="bus"
             />
           </div>
         </div>
@@ -191,7 +205,8 @@
           <Input
             v-model="formData.passportData.previousname.lastname"
             :validators="[validators.onlyCyrilic, validators.nonEmpty]"
-            :valid.sync="valid"
+            :validForm.sync="validForm"
+            :bus="bus"
             type="text"
             label="Предыдущая Фамилия"
           />
@@ -200,7 +215,8 @@
           <Input
             v-model="formData.passportData.previousname.firstname"
             :validators="[validators.onlyCyrilic, validators.nonEmpty]"
-            :valid.sync="valid"
+            :validForm.sync="validForm"
+            :bus="bus"
             type="text"
             label="Предыдущее Имя"
           />
@@ -217,14 +233,16 @@
 import citizenships from "@/assets/data/citizenships.json";
 import passporttypes from "@/assets/data/passport-types.json";
 import Input from "../components/Input/Input.vue";
-import Datepicker from "../components/Datepicker/Datepicker.vue";
-import RadioButton from "../components/RadioButton/RadioButton.vue";
-import Autocomplete from "../components/Autocomplete/Autocomplete.vue";
-import { validators } from "../validators";
+import Datepicker from "@/components/Datepicker/Datepicker.vue";
+import RadioButton from "@/components/RadioButton/RadioButton.vue";
+import Autocomplete from "@/components/Autocomplete/Autocomplete.vue";
+import { validators } from "@/validators";
+import { eventBus } from "@/main";
 
 export default {
   data() {
     return {
+      bus: eventBus,
       formData: {
         personalData: {
           lastname: "",
@@ -253,7 +271,7 @@ export default {
           },
         },
       },
-      valid: true,
+      validForm: true,
       validators: validators,
       citizenshipsAll: citizenships,
       passportTypes: passporttypes,
@@ -286,21 +304,11 @@ export default {
       }
     },
     async formSubmit() {
-      this.valid = true;
-      this.$children.forEach((el) => {
-        if (
-          el.$options._componentTag == "Input" ||
-          el.$options._componentTag == "Autocomplete" ||
-          el.$options._componentTag == "Datepicker"
-        ) {
-          this.checkInput(el);
-        }
-      });
-      if (this.valid) {
-        console.log("UPDATE API EVENT", this.formData);
+      this.validForm = true;
+      this.bus.$emit("submit");
+      if (this.validForm) {
         await this.updateProfileInfo();
       } else {
-        console.log("FAILED UPDATE API EVENT");
         this.$notify({
           group: "foo",
           type: "warn",
@@ -309,28 +317,6 @@ export default {
         });
       }
     },
-    checkInput(input) {
-      const validatorsMasseges = [];
-
-      input.validators.forEach((validator) => {
-        const validatorResult = validator(input.value);
-        if (validatorResult) {
-          validatorsMasseges.push(validatorResult);
-        }
-      });
-      if (validatorsMasseges.length) {
-        input.invalid = true;
-        input.error = validatorsMasseges[validatorsMasseges.length - 1];
-        input.$emit("update:valid", false);
-      } else {
-        input.invalid = false;
-      }
-    },
-  },
-  provide: function () {
-    return {
-      checkInput: this.checkInput,
-    };
   },
 };
 </script>

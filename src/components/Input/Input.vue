@@ -6,7 +6,7 @@
       :value="value"
       :type="type"
       @input="updateInput"
-      @blur="blurInput"
+      @blur="checkInput"
     />
     <div v-if="invalid" class="invalid-feedback">
       {{ error }}
@@ -15,13 +15,10 @@
 </template>
 
 <script>
+import InputMixin from "@/components/InputMixin";
+
 export default {
-  data() {
-    return {
-      invalid: false,
-      error: null,
-    };
-  },
+  mixins: [InputMixin],
   props: {
     label: {
       type: String,
@@ -30,18 +27,6 @@ export default {
     type: {
       type: String,
       default: "",
-    },
-    value: {
-      type: String,
-      default: "",
-    },
-    validators: {
-      type: Array,
-      default: null,
-    },
-    valid: {
-      type: Boolean,
-      default: true,
     },
   },
   computed: {
@@ -52,13 +37,9 @@ export default {
       };
     },
   },
-  inject: ["checkInput"],
   methods: {
     updateInput(e) {
       this.$emit("input", e.target.value);
-    },
-    blurInput() {
-      this.checkInput(this);
     },
   },
 };

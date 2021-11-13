@@ -30,16 +30,19 @@
 
 <script>
 import ClickOutside from "vue-click-outside";
-import { throttle } from "../../helpers.js";
+import { throttle } from "@/helpers.js";
+import InputMixin from "@/components/InputMixin";
 
 export default {
+  mixins: [InputMixin],
   props: {
     label: {
       type: String,
       default: "",
     },
     value: {
-      default: undefined,
+      type: Object,
+      default: null,
     },
     textValue: {
       type: String,
@@ -49,18 +52,9 @@ export default {
       type: Array,
       default: null,
     },
-    validators: {
-      type: Array,
-      default: null,
-    },
-    valid: {
-      type: Boolean,
-      default: true,
-    },
   },
   data() {
     return {
-      invalid: false,
       itemsAll: this.items,
       isDropdownOpen: false,
       throttledSearchItems: null,
@@ -86,21 +80,21 @@ export default {
       return this.value ? this.value[this.textValue] : undefined;
     },
     inputClasses() {
-      return [
-        "form-control",
-        {
-          "is-invalid": this.invalid,
-        },
-      ];
+      return {
+        "form-control": true,
+        "is-invalid": this.invalid,
+      };
     },
   },
-  inject: ["checkInput"],
   methods: {
     showDropDown() {
       this.isDropdownOpen = true;
     },
     hideDropDown() {
       this.isDropdownOpen = false;
+    },
+    blurInput() {
+      setTimeout(() => this.checkInput(), 100);
     },
     selectItem(selectedItem) {
       this.search = selectedItem[this.textValue];
@@ -116,9 +110,6 @@ export default {
           .includes(searchWord ? searchWord.toLowerCase() : searchWord)
       );
       this.isDropdownOpen = true;
-    },
-    blurInput() {
-      this.checkInput(this);
     },
     activeItemDown() {
       this.itemActive < this.itemsAll.length - 1

@@ -7,6 +7,8 @@ import Notifications from "vue-notification";
 Vue.config.productionTip = false;
 Vue.use(Notifications);
 
+export const eventBus = new Vue();
+
 new Vue({
   render: (h) => h(App),
 }).$mount("#app");
