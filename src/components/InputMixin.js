@@ -23,22 +23,17 @@ export default {
   },
   methods: {
     checkInput() {
-      const validatorsMasseges = [];
-      if (this.validators) {
-        this.validators.forEach((validator) => {
-          const validatorResult = validator(this.value);
-          if (validatorResult) {
-            validatorsMasseges.push(validatorResult);
-          }
-        });
+      for (let validator of this.validators) {
+        const error = validator(this.value);
+        if (error) {
+          this.invalid = true;
+          this.error = error;
+          this.$emit("update:validForm", false);
+          return;
+        }
       }
-      if (validatorsMasseges.length) {
-        this.invalid = true;
-        this.error = validatorsMasseges[validatorsMasseges.length - 1];
-        this.$emit("update:validForm", false);
-      } else {
-        this.invalid = false;
-      }
+      this.error = null;
+      this.invalid = false;
     },
   },
   mounted() {

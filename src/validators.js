@@ -1,11 +1,11 @@
 export const validators = {
   onlyCyrilic(txt) {
-    if (!txt.match(/^[а-яА-ЯёЁ]+$/g)) {
+    if (txt.length && !txt.match(/^[а-яА-ЯёЁ]+$/g)) {
       return "Только русские буквы";
     }
   },
   onlyLatin(txt) {
-    if (!txt.match(/^[a-zA-Z]+$/g)) {
+    if (txt.length && !txt.match(/^[a-zA-Z]+$/g)) {
       return "Только английские буквы";
     }
   },
@@ -15,17 +15,17 @@ export const validators = {
     }
   },
   email(txt) {
-    if (!txt.match(/^[A-Z0-9._-]+@[A-Z0-9-]+.+.[A-Z]{2,4}$/i)) {
+    if (txt.length && !txt.match(/^[A-Z0-9._-]+@[A-Z0-9-]+.+.[A-Z]{2,4}$/i)) {
       return "Некорректный Email";
     }
   },
   passportSeries(txt) {
-    if (!txt.match(/^\d{4}$/)) {
+    if (txt.length && !txt.match(/^\d{4}$/)) {
       return "Только 4 цифры";
     }
   },
   passportNumber(txt) {
-    if (!txt.match(/^\d{6}$/)) {
+    if (txt.length && !txt.match(/^\d{6}$/)) {
       return "Только 6 цифр";
     }
   },
